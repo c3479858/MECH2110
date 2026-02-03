@@ -11,21 +11,29 @@ void setup() {
 
   unsigned long Start_time = millis();
 
-  while (digitalRead(buttonPin) == 1) {
-    if(millis() < Start_time + 2000) {
-      digitalWrite(ledPin, HIGH);
-    }
-    else if (millis() > Start_time + 2000) {
+  while (digitalRead(buttonPin) == 1) { //when button is not pressed...
+  
+    if(millis() < Start_time + 2000) {  //wait for 2 seconds with LED off
       digitalWrite(ledPin, LOW);
     }
-    Start_time = millis();
+
+    else if (millis() < Start_time + 3000) {  //turn LED on for 1 second
+      digitalWrite(ledPin, HIGH);
+    }
+
+    else {
+      Start_time = millis();  //resets the to the first if loop to complete the infinite loop
+    }
+
   }
+
+  digitalWrite(ledPin, LOW);  //turns the LED off when the while loop isnt true
+
 }
 
 void loop() {
 
   Serial.println(digitalRead(buttonPin));
   delay(100);
-  Serial.println(millis());
 
 }
