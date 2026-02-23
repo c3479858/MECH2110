@@ -1,0 +1,1 @@
+STRICT_PLAYBACK: trail_not_yet_set 0 load_mechanism app_home = 'C:\Program Files\PTC\Creo 12.4.0.0\Common Files\applications\MECHANISM\'  exec_path = '\x86e_win64\obj\pmechanism.exe'
