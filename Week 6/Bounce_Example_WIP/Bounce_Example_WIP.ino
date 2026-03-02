@@ -1,6 +1,5 @@
 #include <AccelStepper.h>
 
-//#define BT 2
 #define IN1 8
 #define IN2 9
 #define IN3 10
