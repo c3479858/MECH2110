@@ -6,7 +6,7 @@
 #define IN4 11
 #define motorInterfaceType 4
 
-AccelStepper stepper = AccelStepper(motorInterfaceType, IN1, IN2, IN3, IN4);
+AccelStepper stepper = AccelStepper(motorInterfaceType, IN1, IN3, IN2, IN4);
 
 void setup() {
 }
