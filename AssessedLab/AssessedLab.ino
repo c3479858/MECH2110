@@ -27,7 +27,7 @@ int speed = 0;
 
 String case_description = "default";
 
-int task = 0;                               //set to 1 to start if push button start isnt appreciated
+int task = 1;  //set to 1 to start if push button start isnt appreciated
 
 void setup() {
 
@@ -55,7 +55,6 @@ void setup() {
 }
 
 void loop() {
-
   switch (task) {
     case 1:
       case_description = "servo to 15, wait 1.5s, servo to 70, wait 2s. After 4 cycles, +1 to task var";
@@ -71,28 +70,33 @@ void loop() {
 
     case 2:
       case_description = "blink led, on 3s, off 3s. Instant button press turns off, prints text and +1 to task var.";
+      startTime = millis();
       while (digitalRead(buttonPin) == 1) {  //while button isnt pressed
-        startTime = millis();
-        if (millis() < startTime + 3000) {  //on, wait 3s
-          digitalWrite(ledPin, LOW);
-        } else if (millis() < startTime + 6000) {  //off, wait 3s
+        if (millis() < startTime + 3000) {   //on, wait 3s
           digitalWrite(ledPin, HIGH);
+        } else if (millis() < startTime + 6000) {  //off, wait 3s
+          digitalWrite(ledPin, LOW);
         } else {
           startTime = millis();  //loop
         }
       }
+      digitalWrite(ledPin, LOW);
+      Serial.println("button pressed!");
       task++;  //when button pressed, +1 to task counter
 
-    case 3:
+    case 3:   //this one is completely broken rn, need to change so that button can be pressed, use start time and millis()
       case_description = "dc to 50% clkws for 4s, button turns motor off and +1 to task.";
       speed = 0.5 * max;           //dc speed set
       goForwards();                //direction set
       analogWrite(dc_ENA, speed);  //writing to motor
       delay(4000);
-      if (digitalRead(buttonPin) == 0) {  //not sure if this will work, might need to be reversed while statement i.e. while button pressed, dont advance task
-        breakStop();
+      //if (digitalRead(buttonPin) == 0) {
+      //  breakStop();
+      //}
+      while (digitalRead(buttonPin) == 1) {
       }
-      task++;
+      breakStop();
+        task++;
 
     case 4:
       case_description = "wait 2s, dc anticlkws at 80% for 8s: after 1s, accel stepper at 50s/s/s clkws for 8 rev. Once everything stopped +1 to task.";
@@ -109,9 +113,9 @@ void loop() {
       stepper.run();
       delay(7000);  //unsure if this will wait for the stepper to finish before starting the countdown, test in lab.
       coastStop();
-      /*      if (stepper.distanceToGo() == 0) {
-        task++;
-      }*/
+      //      if (stepper.distanceToGo() == 0) {
+      //  task++;
+      //}
       while (stepper.distanceToGo() != 0) {
       }
       task++;
@@ -123,9 +127,9 @@ void loop() {
       stepper.setMaxSpeed(200);
       stepper.moveTo((2048 * (8 - 6)));
       stepper.run();
-      /*      if (stepper.distanceToGo() == 0) {      //might not work since itll just skip this line i think *shrug*
-        task = 0;                               //not necessary but wanted to flex B)
-    }*/
+      //      if (stepper.distanceToGo() == 0) {      //might not work since itll just skip this line i think *shrug*
+      //  task = 0;                               //not necessary but wanted to flex B)
+    //}
       while (stepper.distanceToGo() != 0) {
       }
       task = 0;
@@ -134,22 +138,22 @@ void loop() {
       case_description = "default case, press the button to start from the beginning again.";
       while (digitalRead(buttonPin) == 1) {
       }
-      task++;
+      task = 1;
   }
 }
 void goForwards() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
+  digitalWrite(dc_IN1, HIGH);
+  digitalWrite(dc_IN2, LOW);
 }
 void goBackwards() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(dc_IN1, LOW);
+  digitalWrite(dc_IN2, HIGH);
 }
 void coastStop() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(dc_IN1, HIGH);
+  digitalWrite(dc_IN2, HIGH);
 }
 void breakStop() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
+  digitalWrite(dc_IN1, LOW);
+  digitalWrite(dc_IN2, LOW);
 }
